@@ -11,11 +11,16 @@ export const handle = {
   seo,
 };
 
-export async function loader({params, context}) {
+export async function loader({params, request, context}) {
   const {handle} = params;
+  const searchParams = new URL(request.url).searchParams;
+  const cursor = searchParams.get('cursor');
+  console.log(cursor)
+
   const {collection} = await context.storefront.query(COLLECTION_QUERY, {
     variables: {
       handle,
+      cursor,
     },
   });
 
@@ -40,6 +45,7 @@ export const meta = ({data}) => {
 
 export default function Collection() {
   const {collection} = useLoaderData();
+  //console.log(JSON.stringify(collection, null, 4))
   return (
     <>
       <header className="grid w-full gap-8 py-8 justify-items-start">
@@ -66,13 +72,17 @@ export default function Collection() {
 }
 
 const COLLECTION_QUERY = `#graphql
-  query CollectionDetails($handle: String!) {
+  query CollectionDetails($handle: String!, $cursor: String) {
     collection(handle: $handle) {
       id
       title
       description
       handle
-      products(first: 4) {
+      products(first: 4, after: $cursor) {
+        pageInfo {
+            hasNextPage
+            endCursor
+        }
         nodes {
           id
           title
