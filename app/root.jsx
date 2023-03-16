@@ -10,6 +10,7 @@ import favicon from '../public/favicon.svg';
 import tailwind from './styles/tailwind-build.css';
 import { Layout } from './components/Layout';
 import { Seo } from '@shopify/hydrogen';
+import { ShopifyProvider } from '@shopify/hydrogen-react';
 
 const shopifyConfig = {
   storefrontToken: '3b580e70970c4528da70c98e097c2fa0',
@@ -50,20 +51,22 @@ export default function App() {
   const { name } = data.layout.shop;
 
   return (
-    <html lang="en">
-      <head>
-        <Seo />
-        <Meta />
-        <Links />
-      </head>
-      <body>
-        <Layout title={name}>
-          <Outlet />
-        </Layout>
-        <ScrollRestoration />
-        <Scripts />
-      </body>
-    </html>
+    <ShopifyProvider {...shopifyConfig}>
+      <html lang="en">
+        <head>
+          <Seo />
+          <Meta />
+          <Links />
+        </head>
+        <body>
+          <Layout title={name}>
+            <Outlet />
+          </Layout>
+          <ScrollRestoration />
+          <Scripts />
+        </body>
+      </html>
+    </ShopifyProvider>
   );
 }
 
