@@ -4,7 +4,7 @@ import ProductGallery from '~/components/ProductGallery';
 import ProductOptions from '~/components/ProductOptions';
 
 export const loader = async ({params, context, request}) => {
-    console.log("loader for ProductHandler")
+    //console.log("loader for ProductHandler")
     const {handle} = params;
     const searchParams = new URL(request.url).searchParams;
     const selectedOptions = [];
@@ -26,15 +26,19 @@ export const loader = async ({params, context, request}) => {
     if (!product?.id) {
         throw new Response(null, {status: 404});
     }
+
+    // optionally set a default variant so you always have an "orderable" product selected
+    const selectedVariant =
+    product.selectedVariant ?? product?.variants?.nodes[0];
   
     return json({
-      handle,
       product,
+      selectedVariant,
     });
   }
 
 export default function ProductHandle() {
-    const {handle, product} = useLoaderData();
+    const {product, selectedVariant} = useLoaderData();
 
     return (
         <section className="w-full gap-4 md:gap-8 grid px-6 md:px-8 lg:px-12">
@@ -54,7 +58,7 @@ export default function ProductHandle() {
                   {product.vendor}
                 </span>
               </div>
-              <ProductOptions options={product.options} />
+              <ProductOptions options={product.options} selectedVariant={selectedVariant}/>
               {/*<p>Selected Variant: {product.selectedVariant?.id}</p>*/}
                 <div
                 className="prose border-t border-gray-200 pt-6 text-black text-md"

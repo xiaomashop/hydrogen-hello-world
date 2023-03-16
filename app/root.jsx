@@ -9,11 +9,19 @@ import {
 import favicon from '../public/favicon.svg';
 import tailwind from './styles/tailwind-build.css';
 import { Layout } from './components/Layout';
-import {Seo} from '@shopify/hydrogen';
+import { Seo } from '@shopify/hydrogen';
+
+const shopifyConfig = {
+  storefrontToken: '3b580e70970c4528da70c98e097c2fa0',
+  storeDomain: 'https://hydrogen-preview.myshopify.com',
+  storefrontApiVersion: '2023-01',
+  countryIsoCode: 'US',
+  languageIsoCode: 'en',
+};
 
 export const links = () => {
   return [
-    {rel: 'stylesheet', href: tailwind},
+    { rel: 'stylesheet', href: tailwind },
     {
       rel: 'preconnect',
       href: 'https://cdn.shopify.com',
@@ -22,7 +30,7 @@ export const links = () => {
       rel: 'preconnect',
       href: 'https://shop.app',
     },
-    {rel: 'icon', type: 'image/svg+xml', href: favicon},
+    { rel: 'icon', type: 'image/svg+xml', href: favicon },
   ];
 };
 
@@ -31,15 +39,15 @@ export const meta = () => ({
   viewport: 'width=device-width,initial-scale=1',
 });
 
-export async function loader({context}) {
+export async function loader({ context }) {
   const layout = await context.storefront.query(LAYOUT_QUERY);
-  return {layout};
+  return { layout };
 }
 
 export default function App() {
   const data = useLoaderData();
 
-  const {name} = data.layout.shop;
+  const { name } = data.layout.shop;
 
   return (
     <html lang="en">

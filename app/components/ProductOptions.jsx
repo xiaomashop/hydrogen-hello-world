@@ -1,18 +1,35 @@
 import { Link, useLocation, useSearchParams, useTransition } from "@remix-run/react";
 
-export default function ProductOptions({options}) {
+export default function ProductOptions({options, selectedVariant}) {
     // pathname and search will be used to build option URLs
   const {pathname, search} = useLocation();
   const [currentSearchParams] = useSearchParams();
   const transition = useTransition();
-  console.log("currentSearchParams",currentSearchParams)
+  //console.log("currentSearchParams",currentSearchParams)
+  //console.log( "transition.location", transition.location)
+
+  const paramsWithDefaults = (() => {
+    const defaultParams = new URLSearchParams(currentSearchParams);
+
+    if (!selectedVariant) {
+      return defaultParams;
+    }
+
+    for (const {name, value} of selectedVariant.selectedOptions) {
+      if (!currentSearchParams.has(name)) {
+        defaultParams.set(name, value);
+      }
+    }
+
+    return defaultParams;
+  })();
 
   
   // Update the in-flight request data from the 'transition' (if available)
   // to create an optimistic UI that selects a link before the request completes
   const searchParams = transition.location
   ? new URLSearchParams(transition.location.search)
-  : currentSearchParams;
+  : paramsWithDefaults;
   //const searchParams = currentSearchParams;
 
   //console.log(options)
@@ -26,7 +43,7 @@ export default function ProductOptions({options}) {
         }
         // get the currently selected option value
         const currentOptionVal = searchParams.get(option.name);
-        console.log(currentOptionVal)
+        //console.log(currentOptionVal)
         return (
           <div
             key={option.name}
